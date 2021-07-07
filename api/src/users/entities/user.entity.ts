@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export enum UserType {
+export enum UserRole {
   BASIC = 'BASIC',
   PREMIUM = 'PREMIUM',
 }
@@ -23,21 +23,24 @@ export class UserEntity extends BaseEntity {
 
   @Column({
     type: 'enum',
-    enum: UserType,
-    default: UserType.BASIC,
+    enum: UserRole,
+    default: UserRole.BASIC,
   })
-  role: UserType;
+  role: UserRole;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @Column()
-  password: string;
+  passwordHash: string;
+
+  @Column({ nullable: true, default: null })
+  tokenId: string | null
 
   @Column()
   issuer: string;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   expiresIn: string;
 
   @Column()
