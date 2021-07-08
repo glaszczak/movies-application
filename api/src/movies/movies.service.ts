@@ -12,7 +12,7 @@ export interface MovieDetails {
 @Injectable()
 export class MoviesService {
   async add(title: string) {
-    const details = await this.fetchDetails(title);
+    const details = await this.fetchMovieDetails(title);
 
     if (!details) {
       throw new NotFoundException('No details for that movie');
@@ -26,11 +26,11 @@ export class MoviesService {
     return movie.save();
   }
 
-  async movies(): Promise<MovieEntity[]> {
+  async movies(username: string, password: string): Promise<MovieEntity[]> {
     return MovieEntity.find();
   }
 
-  async fetchDetails(title: string): Promise<MovieDetails> {
+  async fetchMovieDetails(title: string): Promise<MovieDetails> {
     const url = `${process.env.API_URL}/?t=${title}&apikey=${process.env.API_KEY}`;
 
     try {
@@ -42,6 +42,31 @@ export class MoviesService {
       return data;
     } catch (e) {
       console.log('ERRROR', e);
+    }
+  }
+
+  private async authorizeUser(
+    username: string,
+    password: string,
+  ): Promise<string> {
+    try {
+      const {
+        data: { token },
+      } = await axios.request({
+        url: process.env.AUTH_URL,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          username,
+          password,
+        },
+      });
+
+      return token;
+    } catch (e) {
+      console.log('ERROR', e);
     }
   }
 }

@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { authFactory, AuthError } = require("./auth");
 
-const PORT = 3000;
+const { APP_PORT } = process.env
 const { JWT_SECRET } = process.env;
 
 if (!JWT_SECRET) {
@@ -47,6 +47,6 @@ app.use((error, _, res, __) => {
   return res.status(500).json({ error: "internal server error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`auth svc running at port ${PORT}`);
-});
+app.listen(APP_PORT, () => {
+  console.log(`auth svc running at port ${APP_PORT}`);
+})
