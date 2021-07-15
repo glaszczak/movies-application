@@ -3,8 +3,8 @@ services:
   api:
     image: api
     links:
-      - "auth:auth"
-    build: 
+      - 'auth:auth'
+    build:
       context: ./api
     ports:
       - 3000:3000

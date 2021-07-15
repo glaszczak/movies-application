@@ -5,11 +5,15 @@ import { AppService } from './app.service';
 import { MoviesModule } from './movies/movies.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot(), UsersModule, MoviesModule,
+    TypeOrmModule.forRoot(),
+    UsersModule,
+    MoviesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
