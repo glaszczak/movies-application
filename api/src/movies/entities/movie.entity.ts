@@ -2,6 +2,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -13,6 +14,9 @@ export class MovieEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   movieId: number;
 
+  @CreateDateColumn()
+  createdAt: Date;
+  
   @Column()
   title: string;
 
