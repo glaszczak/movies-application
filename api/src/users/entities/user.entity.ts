@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -15,11 +16,11 @@ export enum UserRole {
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   userId: number;
 
   @Column()
-  name: string;
+  username: string;
 
   @Column({
     type: 'enum',
@@ -32,19 +33,10 @@ export class UserEntity extends BaseEntity {
   createdAt: Date;
 
   @Column()
-  passwordHash: string;
+  password: string;
 
   @Column({ nullable: true, default: null })
-  tokenId: string | null
-
-  @Column()
-  issuer: string;
-
-  @Column({ nullable: true, default: null })
-  expiresIn: string;
-
-  @Column()
-  subject: number;
+  token: string | null;
 
   @OneToMany(
     () => MovieEntity,
