@@ -1,5 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import axios from 'axios';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { MovieInputDto } from './dto/movie-input.dto';
 import { MovieEntity } from './entities/movie.entity';
 
 export interface MovieDetails {
@@ -11,7 +17,18 @@ export interface MovieDetails {
 
 @Injectable()
 export class MoviesService {
-  async add(title: string) {
+  async create(
+    movieInputDto: MovieInputDto,
+    user: UserEntity,
+  ): Promise<MovieEntity> {
+    const { title } = movieInputDto;
+
+    if (await this.isMovie(title, user)) {
+      throw new NotFoundException(
+        `The '${title}' movie already exist for user: ${user.username}`,
+      );
+    }
+
     const details = await this.fetchMovieDetails(title);
 
     if (!details) {
@@ -23,50 +40,43 @@ export class MoviesService {
     movie.released = details['Released'];
     movie.genre = details['Genre'];
     movie.director = details['Director'];
+    movie.user = user;
     return movie.save();
   }
 
-  async movies(username: string, password: string): Promise<MovieEntity[]> {
-    return MovieEntity.find();
+  async movies(user: UserEntity): Promise<MovieEntity[]> {
+    return await MovieEntity.find({
+      where: {
+        user,
+      },
+    });
   }
 
   async fetchMovieDetails(title: string): Promise<MovieDetails> {
     const url = `${process.env.API_URL}/?t=${title}&apikey=${process.env.API_KEY}`;
 
-    try {
-      const { data } = await axios.get(url, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return data;
-    } catch (e) {
-      console.log('ERRROR', e);
+    const { data } = await axios.get(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (data.Response === 'False') {
+      console.log(data.Error);
+      throw new BadRequestException(data.Error);
     }
+
+    return data;
   }
 
-  private async authorizeUser(
-    username: string,
-    password: string,
-  ): Promise<string> {
-    try {
-      const {
-        data: { token },
-      } = await axios.request({
-        url: process.env.AUTH_URL,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: {
-          username,
-          password,
-        },
-      });
+  async isMovie(title: string, user: UserEntity) {
+    const movie = await MovieEntity.findOne({
+      where: {
+        title,
+        user,
+      },
+    });
 
-      return token;
-    } catch (e) {
-      console.log('ERROR', e);
-    }
+    return movie;
   }
 }

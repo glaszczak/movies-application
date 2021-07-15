@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
   BaseEntity,
@@ -11,9 +12,11 @@ import {
 
 @Entity('movies')
 export class MovieEntity extends BaseEntity {
+  @Exclude()
   @PrimaryGeneratedColumn()
   movieId: number;
 
+  @Exclude()
   @CreateDateColumn()
   createdAt: Date;
   
@@ -29,6 +32,7 @@ export class MovieEntity extends BaseEntity {
   @Column()
   director: string;
 
+  @Exclude()
   @ManyToOne(
     () => UserEntity,
     user => user.movies,
