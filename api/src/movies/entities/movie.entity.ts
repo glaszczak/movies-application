@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
@@ -19,16 +20,20 @@ export class MovieEntity extends BaseEntity {
   @Exclude()
   @CreateDateColumn()
   createdAt: Date;
-  
+
+  @ApiProperty()
   @Column()
   title: string;
 
+  @ApiProperty()
   @Column()
   released: string;
 
+  @ApiProperty()
   @Column()
   genre: string;
 
+  @ApiProperty()
   @Column()
   director: string;
 
@@ -37,6 +42,6 @@ export class MovieEntity extends BaseEntity {
     () => UserEntity,
     user => user.movies,
   )
-  @JoinColumn({name: "userId"})
+  @JoinColumn({ name: 'userId' })
   user: UserEntity;
 }
