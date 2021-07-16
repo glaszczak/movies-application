@@ -16,8 +16,6 @@ import { GetUser } from 'src/auth/user.decorator';
 import { LimitMoviesPipe } from './pipes/limit-movies.pipe';
 import {
   ApiBearerAuth,
-  ApiBody,
-  ApiHeader,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
