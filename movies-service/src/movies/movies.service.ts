@@ -23,13 +23,13 @@ export class MoviesService {
   ): Promise<MovieEntity> {
     const { title } = movieInputDto;
 
-    await this.isMovie(title, user);
-
     const details = await this.fetchMovieDetails(title);
 
     if (!details) {
       throw new NotFoundException('No details for that movie');
     }
+
+    await this.isMovie(details['Title'], user);
 
     const movie = new MovieEntity();
     movie.title = details['Title'];
@@ -66,14 +66,13 @@ export class MoviesService {
   }
 
   async isMovie(title: string, user: UserEntity) {
-    const moviesQuery = await MovieEntity.createQueryBuilder('movies')
+    const movies = await MovieEntity.createQueryBuilder('movies')
       .leftJoinAndSelect('movies.user', 'user')
       .where({ user })
-      .andWhere('LOWER(movies.title) = LOWER(:title)', { title });
+      .andWhere('LOWER(movies.title) = LOWER(:title)', { title })
+      .getCount();
 
-    const [_movies, count] = await moviesQuery.getManyAndCount();
-
-    if (count > 0) {
+    if (movies > 0) {
       throw new NotFoundException(
         `The '${title}' movie already exist for user: ${user.username}`,
       );
