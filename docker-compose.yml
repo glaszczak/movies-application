@@ -5,7 +5,7 @@ services:
     links:
       - 'auth:auth'
     build:
-      context: ./api
+      context: ./movies-service
     ports:
       - 3000:3000
     volumes:
@@ -21,7 +21,7 @@ services:
     restart: always
     ports:
       - 55432:5432
-    env_file: api/.env
+    env_file: movies-service/.env
     volumes:
       - .dbdata:/var/lib/postgresql
     networks:
