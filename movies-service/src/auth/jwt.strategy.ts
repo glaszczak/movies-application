@@ -1,8 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { AuthService } from './auth.service';
 
 interface AuthPayload {
   userId: number;
@@ -10,8 +9,6 @@ interface AuthPayload {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  @Inject() authService: AuthService;
-
   constructor() {
     super({
       secretOrKey: process.env.SECRET_JWT_KEY,
